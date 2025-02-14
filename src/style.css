@@ -1,0 +1,297 @@
+/* Основные стили для центрирования приложения */
+body, html {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7; /* Мягкий фон */
+  animation: fadeIn 1s ease-out; /* Анимация при загрузке */
+}
+
+/* Анимация при загрузке */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Контейнер для приложения */
+.app-container {
+  max-width: 800px;
+  width: 100%;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: slideUp 1s ease-out; /* Анимация при загрузке */
+  box-sizing: border-box; /* Это гарантирует, что padding не выйдет за пределы контейнера */
+}
+
+/* Анимация появления контейнера */
+@keyframes slideUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Стили для списка вопросов */
+.questions-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Общие стили для вопроса */
+.question-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Добавлена анимация при наведении */
+}
+
+/* Варианты фона для вопросов (красный, белый, зеленый) */
+.question-item.bg-1 {
+  background-color: #ffebee; /* Мягкий красный */
+}
+
+.question-item.bg-2 {
+  background-color: #ffffff; /* Белый */
+}
+
+.question-item.bg-3 {
+  background-color: #e8f5e9; /* Мягкий зеленый */
+}
+
+/* Анимация при наведении */
+.question-item:hover {
+  transform: scale(1.05); /* Увеличение размера при наведении */
+  background-color: #ffcccb; /* Легкая красная подложка при наведении */
+}
+
+/* Стили для текста вопроса */
+.question-text {
+  font-size: 16px;
+  color: #333333;
+  margin: 0;
+}
+
+/* Стили для вариантов ответов (если захотите добавить) */
+.answer-options {
+  margin-top: 10px;
+}
+
+.answer-option {
+  display: block;
+  margin: 5px 0;
+  padding: 8px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Анимация при наведении */
+}
+
+.answer-option:hover {
+  background-color: #e0e0e0;
+  transform: translateX(5px); /* Сдвиг в сторону при наведении */
+}
+
+/* Стили для кнопок (если захотите добавить) */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #64b5f6;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #42a5f5;
+}
+
+/* Стили для заголовка (если захотите добавить) */
+.app-title {
+  font-size: 24px;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: fadeInTitle 1s ease-out; /* Анимация для заголовка */
+}
+
+@keyframes fadeInTitle {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Стили для футера (если захотите добавить) */
+.app-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #777777;
+  animation: fadeInFooter 1s ease-out; /* Анимация для футера */
+}
+
+@keyframes fadeInFooter {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Адаптивный дизайн для мобильных устройств */
+@media (max-width: 600px) {
+  body, html {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    display: block; /* Убираем центрирование */
+  }
+
+  .app-container {
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box; /* Убираем любые дополнительные отступы */
+    border-radius: 0; /* Убираем радиус для мобильных устройств, чтобы контейнер был прямоугольным */
+  }
+
+  .question-item {
+    padding: 12px;
+  }
+
+  .app-title {
+    font-size: 20px;
+  }
+
+  .question-text {
+    font-size: 14px;
+  }
+
+  .button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
+
+/* Адаптивный дизайн для планшетов (от 601px до 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .app-container {
+    padding: 18px;
+  }
+
+  .question-item {
+    padding: 14px;
+  }
+
+  .app-title {
+    font-size: 22px;
+  }
+
+  .question-text {
+    font-size: 15px;
+  }
+
+  .button {
+    font-size: 13px;
+    padding: 9px 18px;
+  }
+}
+
+/* Адаптивный дизайн для больших экранов (компьютеры и ноутбуки) */
+@media (min-width: 1025px) {
+  .app-container {
+    padding: 20px;
+  }
+
+  .question-item {
+    padding: 15px;
+  }
+
+  .app-title {
+    font-size: 24px;
+  }
+
+  .question-text {
+    font-size: 16px;
+  }
+
+  .button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+/* Стили для текстового поля */
+.custom-input {
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* При фокусе поле будет выделяться */
+.custom-input:focus {
+  border-color: #64b5f6;
+  box-shadow: 0 0 8px rgba(100, 181, 246, 0.6);
+}
+
+/* Стили для обертки input (если нужно добавить иконку или подпись) */
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Стили для иконки внутри input */
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 18px;
+}
+
+/* Сдвигаем текст в input, если используется иконка */
+.input-container .custom-input {
+  padding-left: 40px;
+}
+
+/* Стили для заблокированной кнопки */
+.button:disabled {
+  background-color: #b0bec5; /* Серый цвет для неактивного состояния */
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  transition: opacity 0.3s ease;
+}
+
+.btn-block_question{
+  padding-top: 0;
+  display: flex;
+  justify-content: space-between;
+}
