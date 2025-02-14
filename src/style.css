@@ -327,6 +327,11 @@ ul{
   box-sizing: border-box;
 }
 
+.textarea {
+  resize: none;
+  height: 250px;
+}
+
 /* При фокусе поле будет выделяться */
 .custom-input:focus {
   border-color: #64b5f6;
