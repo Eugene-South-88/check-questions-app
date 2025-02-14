@@ -33,18 +33,18 @@ const toggleQuestionStatus = async (id, status) => {
 const loadQuestions = async () => {
   const {data} = await axios.get('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json');
 
-  questions.value = Object.keys(data).map(key => {
-    return {
-      id: key,
-      ...data[key]
-    }
-  })
+  questions.value = Object.keys(data)
+      .map(key => ({
+        id: key,
+        ...data[key]
+      }))
+      .sort(() => Math.random() - 0.5);
 }
 
 const addQuestion = async () => {
   await axios.post('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json', draftQuestion.value);
 
-  draftQuestion.value = {...defaultQuestion}
+  draftQuestion.value = {...defaultQuestion};
 
   await loadQuestions()
 };
@@ -83,7 +83,7 @@ onMounted(() => {
         <strong class="question-text">{{ item.title }}</strong>
 
         <div v-if="activeQuestionIndex === item.id" class="">
-          <pre class="formatted-text">{{ item.text }}</pre>
+          <div class="formatted-text">{{ item.text }}</div>
 
           <div class="btn-block_question">
             <button class="btn-green" @click="toggleQuestionStatus(item.id, 'finish')">Знает</button>
@@ -101,7 +101,7 @@ onMounted(() => {
     <div class="input-container">
       <input v-model="draftQuestion.title" type="text" class="custom-input" placeholder="Введите вопрос">
 
-      <textarea v-model="draftQuestion.text" type="text" class="custom-input" placeholder="Введите ответ на вопрос"/>
+      <textarea v-model="draftQuestion.text" type="text" class="custom-input textarea" placeholder="Введите ответ на вопрос"/>
 
       <div class="btn-block_question">
         <button class="button" @click="addQuestion" :disabled="disabledAddButton">
@@ -122,5 +122,6 @@ onMounted(() => {
   word-wrap: break-word; /* Разбивает длинные слова, если они не помещаются */
   overflow-wrap: break-word; /* То же, что и word-wrap для современных браузеров */
   max-width: 100%; /* Ограничивает ширину контейнера */
+  margin: 1em 0;
 }
 </style>
