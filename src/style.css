@@ -23,7 +23,7 @@ body, html {
 /* Контейнер для приложения */
 .app-container {
   max-width: 800px;
-  width: 100%;
+  width: 600px;
   margin-top: 50px;
   padding: 20px;
   background-color: #ffffff;
@@ -45,15 +45,43 @@ body, html {
   }
 }
 
+/* Стили для чипсов */
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.chip {
+  background-color: #64b5f6;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.chip:hover {
+  background-color: #42a5f5;
+  transform: scale(1.05);
+}
+
 /* Стили для списка вопросов */
 .questions-list {
-  list-style-type: none;
+  padding-left: 0;
+  margin: 10px 0;
+}
+
+ul{
   padding: 0;
-  margin: 0;
 }
 
 /* Общие стили для вопроса */
 .question-item {
+  cursor: pointer;
+  list-style: none;
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 8px;
@@ -61,22 +89,32 @@ body, html {
 }
 
 /* Варианты фона для вопросов (красный, белый, зеленый) */
-.question-item.bg-1 {
+.question-item.bg-repeat {
   background-color: #ffebee; /* Мягкий красный */
 }
 
-.question-item.bg-2 {
-  background-color: #ffffff; /* Белый */
+.question-item.bg-active {
+  background-color: #ECF5FD; /* Мягкий голубой */
 }
 
-.question-item.bg-3 {
+.question-item.bg-finish {
   background-color: #e8f5e9; /* Мягкий зеленый */
 }
 
 /* Анимация при наведении */
-.question-item:hover {
+.question-item.bg-1:hover {
   transform: scale(1.05); /* Увеличение размера при наведении */
   background-color: #ffcccb; /* Легкая красная подложка при наведении */
+}
+
+.question-item.bg-2:hover {
+  transform: scale(1.05); /* Увеличение размера при наведении */
+  background-color: #D6EBFC; /* Легкая голубой подложка при наведении */
+}
+
+.question-item.bg-3:hover {
+  transform: scale(1.05); /* Увеличение размера при наведении */
+  background-color: #C8E6C9; /* Легкая зеленый подложка при наведении */
 }
 
 /* Стили для текста вопроса */
@@ -116,11 +154,46 @@ body, html {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-green {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #00bd7e;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-red {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: rgba(255, 0, 0, 0.63);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .button:hover {
   background-color: #42a5f5;
+  transform: scale(1.05);
+}
+
+.btn-green:hover {
+  background-color: #00a45e;
+  transform: scale(1.05);
+}
+
+.btn-red:hover {
+  background-color: rgba(255, 0, 0, 0.8);
+  transform: scale(1.05);
 }
 
 /* Стили для заголовка (если захотите добавить) */
@@ -290,7 +363,7 @@ body, html {
   transition: opacity 0.3s ease;
 }
 
-.btn-block_question{
+.btn-block_question {
   padding-top: 0;
   display: flex;
   justify-content: space-between;
