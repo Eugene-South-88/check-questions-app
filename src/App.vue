@@ -57,16 +57,15 @@ const deleteQuestion = async (id) => {
   if (confirmDelete === '2003') {
     await axios.delete(`https://chek-list-questions-default-rtdb.firebaseio.com/questions/${id}.json`)
   } else {
-    alert('Снимай трусы')
+    alert('Обойдешься')
   }
   await loadQuestions()
 }
 
 const isDisabledBtn = computed(() => (
-    draftQuestion.title
-    || draftQuestion.text
-    || draftQuestion.category
-
+    draftQuestion.value.title.length > 3 &&
+    draftQuestion.value.text.length > 3 &&
+    draftQuestion.value.category.length !== 0
 ))
 
 onMounted(() => {
@@ -75,7 +74,9 @@ onMounted(() => {
 </script>
 
 <template>
+
   <div class="app-container" v-if="!openQuestionForm">
+
     <h1 class="app-title">Список вопросов</h1>
     <div class="chip-container">
       <div class="chip" @click="activeChipQuestion = allQuestionList">Все вопросы</div>
