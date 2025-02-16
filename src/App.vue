@@ -127,3 +127,12 @@ onMounted(() => {
   </div>
 </template>
 
+<style scoped>
+.formatted-text {
+  white-space: pre-line; /* Сохраняет переносы строк и пробелы */
+  word-wrap: break-word; /* Разбивает длинные слова, если они не помещаются */
+  overflow-wrap: break-word; /* То же, что и word-wrap для современных браузеров */
+  max-width: 100%; /* Ограничивает ширину контейнера */
+  margin: 1em 0;
+}
+</style>
