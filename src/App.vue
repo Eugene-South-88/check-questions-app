@@ -23,7 +23,7 @@ const category = [
   { value: 'other', label: 'Other' },
 ]
 const openQuestionForm = ref(false)
-const activeChipQuestion = ref(shallowRef(allQuestionList))
+const activeChipQuestion = ref('allQuestionList')
 
 const loadQuestions = async () => {
   const {data} = await axios.get('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json')
@@ -62,10 +62,10 @@ const deleteQuestion = async (id) => {
   await loadQuestions()
 }
 
-const isDisabledBtn = computed(() => (
+const isEnabledBtn = computed(() => (
     draftQuestion.value.title.length > 3 &&
     draftQuestion.value.text.length > 3 &&
-    draftQuestion.value.category.length !== 0
+    draftQuestion.value.category !== ''
 ))
 
 onMounted(() => {
@@ -79,11 +79,11 @@ onMounted(() => {
 
     <h1 class="app-title">Список вопросов</h1>
     <div class="chip-container">
-      <div class="chip" @click="activeChipQuestion = allQuestionList">Все вопросы</div>
-      <div class="chip" @click="activeChipQuestion = cssQuestionList">CSS</div>
-      <div class="chip" @click="activeChipQuestion = jsQuestionList">JavaScript</div>
-      <div class="chip" @click="activeChipQuestion = vueQuestionList">Vue</div>
-      <div class="chip" @click="activeChipQuestion = otherQuestionList">Общие</div>
+      <div class="chip" @click="activeChipQuestion = 'allQuestionList'">Все вопросы</div>
+      <div class="chip" @click="activeChipQuestion = 'cssQuestionList'">CSS</div>
+      <div class="chip" @click="activeChipQuestion = 'jsQuestionList'">JavaScript</div>
+      <div class="chip" @click="activeChipQuestion = 'vueQuestionList'">Vue</div>
+      <div class="chip" @click="activeChipQuestion = 'otherQuestionList'">Общие</div>
     </div>
     <component
     :is="activeChipQuestion"
@@ -121,7 +121,7 @@ onMounted(() => {
         <button class="button" @click="openQuestionForm = !openQuestionForm">
           Назад к списку вопросов
         </button>
-        <button class="button" @click="addQuestion" :disabled="isDisabledBtn">Добавить вопрос</button>
+        <button class="button" @click="addQuestion" :disabled="!isEnabledBtn">Добавить вопрос</button>
       </div>
     </div>
   </div>
