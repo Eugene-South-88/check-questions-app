@@ -10,6 +10,39 @@ body, html {
   animation: fadeIn 1s ease-out; /* Анимация при загрузке */
 }
 
+ .question-item {
+   position: relative; /* Для абсолютного позиционирования иконки */
+   padding-right: 40px; /* Место под иконку */
+ }
+
+.delete-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.delete-icon {
+  width: 24px;
+  height: 24px;
+  fill: #ff4444;
+}
+
+/* Для предотвращения клика на контент вопроса */
+.question-text {
+  pointer-events: none;
+}
+
 /* Анимация при загрузке */
 @keyframes fadeIn {
   0% {
@@ -57,7 +90,7 @@ body, html {
   background-color: #64b5f6;
   color: white;
   padding: 8px 15px;
-  border-radius: 5px;
+  border-radius: 50px;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
@@ -196,6 +229,13 @@ ul{
   transform: scale(1.05);
 }
 
+.formatted-text {
+  white-space: pre-line; /* Сохраняет переносы строк и пробелы */
+  word-wrap: break-word; /* Разбивает длинные слова, если они не помещаются */
+  overflow-wrap: break-word; /* То же, что и word-wrap для современных браузеров */
+  max-width: 100%; /* Ограничивает ширину контейнера */
+}
+
 /* Стили для заголовка (если захотите добавить) */
 .app-title {
   font-size: 24px;
@@ -249,7 +289,8 @@ ul{
   }
 
   .question-item {
-    padding: 12px;
+    padding: 12px 50px 12px 12px;
+    min-height: 50px; /* Гарантирует высоту для кликабельной области */
   }
 
   .app-title {
@@ -263,6 +304,23 @@ ul{
   .button {
     font-size: 12px;
     padding: 8px 16px;
+  }
+
+  .delete-btn {
+    right: 5px; /* Уменьшаем отступ от края */
+    padding: 3px; /* Меньший паддинг */
+    z-index: 1; /* Поднимает иконку над контентом */
+  }
+
+  .delete-icon {
+    width: 20px; /* Уменьшаем размер иконки */
+    height: 20px;
+  }
+
+  .question-text {
+    max-width: calc(100% - 60px); /* Ограничиваем ширину текста */
+    white-space: normal; /* Разрешаем перенос строк */
+    margin-right: 10px; /* Добавляем отступ от иконки */
   }
 }
 
@@ -367,4 +425,29 @@ ul{
   padding-top: 0;
   display: flex;
   justify-content: space-between;
+}
+
+ .option-list {
+   display: flex;
+   gap: 10px;
+   margin-bottom: 10px;
+ }
+
+.option-card {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.option-card.active {
+  background-color: #64b5f6;
+}
+
+textarea{
+  resize: none;
+  height: 250px;
 }

@@ -1,28 +1,29 @@
 <script setup>
 import axios from "axios";
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, ref, shallowRef} from "vue";
+import allQuestionList from "@/components/allQuestionList.vue";
+import cssQuestionList from "@/components/cssQuestionList.vue";
+import jsQuestionList from "@/components/jsQuestionList.vue";
+import vueQuestionList from "@/components/vueQuestionList.vue";
+import otherQuestionList from "@/components/otherQuestionList.vue";
+
+const defaultQuestion = Object.freeze({
+  title: '',
+  text: '',
+  category: '',
+  status: 'active'
+})
 
 const questions = ref([])
-const titleQuestion = ref('')
-const textQuestion = ref('')
-const toggleAddQuestion = ref(false)
-const activeQuestionIndex = ref(1)
-
-const toggleAnswer = (id) => {
-  if (activeQuestionIndex.value === id) {
-    activeQuestionIndex.value = null
-  } else {
-    activeQuestionIndex.value = id
-  }
-}
-
-const toggleQuestionStatus = async (id, status) => {
-  await axios.patch(`https://chek-list-questions-default-rtdb.firebaseio.com/questions/${id}.json`, {
-    status: status
-  })
-  const questionIndex = questions.value.findIndex(e => e.id === id)
-  questions.value[questionIndex].status = status
-}
+const draftQuestion = ref({...defaultQuestion})
+const category = [
+  { value: 'css', label: 'CSS' },
+  { value: 'js', label: 'JavaScript' },
+  { value: 'vue', label: 'Vue' },
+  { value: 'other', label: 'Other' },
+]
+const openQuestionForm = ref(false)
+const activeChipQuestion = ref(shallowRef(allQuestionList))
 
 const loadQuestions = async () => {
   const {data} = await axios.get('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json')
@@ -34,18 +35,39 @@ const loadQuestions = async () => {
   })
 }
 
-const addQuestion = async () => {
-  const question = ref({
-    title: titleQuestion.value,
-    text: textQuestion.value,
-    status: 'active'
+const toggleQuestionStatus = async (id, status) => {
+  await axios.patch(`https://chek-list-questions-default-rtdb.firebaseio.com/questions/${id}.json`, {
+    status: status
   })
-  await axios.post('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json', question.value)
-
-  questions.value.push(question.value)
-  titleQuestion.value = ''
-  textQuestion.value = ''
+  await loadQuestions()
 }
+
+const addQuestion = async () => {
+  await axios.post('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json', draftQuestion.value)
+
+  draftQuestion.value = {...defaultQuestion}
+
+  await loadQuestions()
+
+}
+
+const deleteQuestion = async (id) => {
+  console.log(id)
+  const confirmDelete = prompt('Введите пороль для удаления:');
+  if (confirmDelete === '2003') {
+    await axios.delete(`https://chek-list-questions-default-rtdb.firebaseio.com/questions/${id}.json`)
+  } else {
+    alert('Снимай трусы')
+  }
+  await loadQuestions()
+}
+
+const isDisabledBtn = computed(() => (
+    draftQuestion.title
+    || draftQuestion.text
+    || draftQuestion.category
+
+))
 
 onMounted(() => {
   loadQuestions()
@@ -53,58 +75,54 @@ onMounted(() => {
 </script>
 
 <template>
-
-  <div class="app-container" v-if="!toggleAddQuestion">
+  <div class="app-container" v-if="!openQuestionForm">
     <h1 class="app-title">Список вопросов</h1>
     <div class="chip-container">
-      <div class="chip">CSS</div>
-      <div class="chip">JavaScript</div>
-      <div class="chip">Vue</div>
-      <div class="chip">Общие</div>
+      <div class="chip" @click="activeChipQuestion = allQuestionList">Все вопросы</div>
+      <div class="chip" @click="activeChipQuestion = cssQuestionList">CSS</div>
+      <div class="chip" @click="activeChipQuestion = jsQuestionList">JavaScript</div>
+      <div class="chip" @click="activeChipQuestion = vueQuestionList">Vue</div>
+      <div class="chip" @click="activeChipQuestion = otherQuestionList">Общие</div>
     </div>
-    <ul class="questions-list">
-
-      <li class="question-item"
-          :class="`bg-${item.status}`"
-          v-for="item in questions"
-          :key="item.id"
-          @click="toggleAnswer(item.id)"
-      >
-        <strong class="question-text">{{ item.title }}</strong>
-        <div v-if="activeQuestionIndex === item.id" class="">
-          <pre class="formatted-text">{{ item.text }}</pre>
-          <div class="btn-block_question">
-            <button class="btn-green" @click="toggleQuestionStatus(item.id, 'finish')">Знает</button>
-            <button class="btn-red" @click="toggleQuestionStatus(item.id, 'repeat')">Не знает</button>
-          </div>
-        </div>
-      </li>
-
-    </ul>
-    <button class="button" @click="toggleAddQuestion = !toggleAddQuestion">Добавить вопрос</button>
+    <component
+    :is="activeChipQuestion"
+        :questions="questions"
+        @finish-question="toggleQuestionStatus"
+        @repeat-question="toggleQuestionStatus"
+        @removeQuestion="deleteQuestion"
+    >
+    </component>
+    <button class="button" @click="openQuestionForm = true">Добавить вопрос</button>
   </div>
 
-  <div class="app-container" v-if="toggleAddQuestion">
+  <div class="app-container" v-if="openQuestionForm">
     <div class="input-container">
-      <input v-model="titleQuestion" type="text" class="custom-input" placeholder="Введите вопрос">
-      <textarea v-model="textQuestion" type="text" class="custom-input" placeholder="Введите ответ на вопрос"></textarea>
+      <input v-model="draftQuestion.title" type="text" class="custom-input" placeholder="Введите вопрос">
+      <textarea v-model="draftQuestion.text"
+                type="text"
+                class="custom-input"
+                placeholder="Введите ответ на вопрос"
+      ></textarea>
+
+      <div class="option-list">
+        <div
+            v-for="option in category"
+            :key="option.value"
+            class="option-card"
+            :class="{ active: draftQuestion.category === option.value }"
+            @click="draftQuestion.category = option.value"
+        >
+          {{ option.label }}
+        </div>
+      </div>
+
       <div class="btn-block_question">
-        <button class="button" @click="addQuestion" :disabled="titleQuestion.length<3 || textQuestion.length<3">Добавить
-          вопрос
+        <button class="button" @click="openQuestionForm = !openQuestionForm">
+          Назад к списку вопросов
         </button>
-        <button class="button" @click="toggleAddQuestion = !toggleAddQuestion">
-          {{ toggleAddQuestion === false ? 'Добавить вопрос' : 'Назад к списку вопросов' }}
-        </button>
+        <button class="button" @click="addQuestion" :disabled="isDisabledBtn">Добавить вопрос</button>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.formatted-text {
-  white-space: pre-line; /* Сохраняет переносы строк и пробелы */
-  word-wrap: break-word; /* Разбивает длинные слова, если они не помещаются */
-  overflow-wrap: break-word; /* То же, что и word-wrap для современных браузеров */
-  max-width: 100%; /* Ограничивает ширину контейнера */
-}
-</style>
