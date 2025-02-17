@@ -1,6 +1,7 @@
 <script setup>
 import axios from "axios";
 import {computed, onMounted, ref} from "vue";
+import { createQuestion, getQuestions, patchQuestions } from "@/api/questions.js";
 import QuestionItem from "@/components/QuestionItem.vue";
 
 const defaultQuestion = Object.freeze({
@@ -8,46 +9,36 @@ const defaultQuestion = Object.freeze({
   text: '',
   category: '',
   status: 'active'
-})
-const questions = ref([])
-const draftQuestion = ref({...defaultQuestion})
-const openQuestionForm = ref(false)
-
+});
 const chips = [
   {name: 'All', value: null, label: 'all'},
   {name: 'CSS', value: 'css', label: 'CSS'},
   {name: 'JS', value: 'js', label: 'JavaScript'},
   {name: 'Vue', value: 'vue', label: 'Vue'},
   {name: 'Other', value: 'other', label: 'Other'},
-]
-const categories = ref({...chips})
+];
+
+const questions = ref([])
+const draftQuestion = ref({...defaultQuestion})
+const openQuestionForm = ref(false)
 const activeChip = ref(null)
 
 const loadQuestions = async () => {
-  const {data} = await axios.get('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json')
-  questions.value = Object.keys(data).map(key => {
-    return {
-      id: key,
-      ...data[key]
-    }
+  questions.value = await getQuestions();
+}
+
+const toggleQuestionStatus = (id, status) => {
+  patchQuestions(id, status).then(() => {
+    loadQuestions();
+  });
+}
+
+const addQuestion = () => {
+  createQuestion(draftQuestion.value).then(() => {
+    draftQuestion.value = {...defaultQuestion};
+    loadQuestions();
   })
-}
-
-const toggleQuestionStatus = async (id, status) => {
-  await axios.patch(`https://chek-list-questions-default-rtdb.firebaseio.com/questions/${id}.json`, {
-    status: status
-  })
-  await loadQuestions()
-}
-
-const addQuestion = async () => {
-  await axios.post('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json', draftQuestion.value)
-
-  draftQuestion.value = {...defaultQuestion}
-
-  await loadQuestions()
-
-}
+};
 
 const deleteQuestion = async (id) => {
   console.log(id)
@@ -108,7 +99,7 @@ onMounted(() => {
 
       <div class="option-list">
         <div
-            v-for="option in categories"
+            v-for="option in chips"
             :key="option.value"
             class="option-card"
             :class="{ active: draftQuestion.category === option.value }"
