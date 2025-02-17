@@ -1,11 +1,7 @@
 <script setup>
 import axios from "axios";
-import {computed, onMounted, ref, shallowRef} from "vue";
-import allQuestionList from "@/components/allQuestionList.vue";
-import cssQuestionList from "@/components/cssQuestionList.vue";
-import jsQuestionList from "@/components/jsQuestionList.vue";
-import vueQuestionList from "@/components/vueQuestionList.vue";
-import otherQuestionList from "@/components/otherQuestionList.vue";
+import {computed, onMounted, ref} from "vue";
+import QuestionItem from "@/components/QuestionItem.vue";
 
 const defaultQuestion = Object.freeze({
   title: '',
@@ -13,17 +9,19 @@ const defaultQuestion = Object.freeze({
   category: '',
   status: 'active'
 })
-
 const questions = ref([])
 const draftQuestion = ref({...defaultQuestion})
-const category = [
-  { value: 'css', label: 'CSS' },
-  { value: 'js', label: 'JavaScript' },
-  { value: 'vue', label: 'Vue' },
-  { value: 'other', label: 'Other' },
-]
 const openQuestionForm = ref(false)
-const activeChipQuestion = ref('allQuestionList')
+
+const chips = [
+  {name: 'All', value: null, label: 'all'},
+  {name: 'CSS', value: 'css', label: 'CSS'},
+  {name: 'JS', value: 'js', label: 'JavaScript'},
+  {name: 'Vue', value: 'vue', label: 'Vue'},
+  {name: 'Other', value: 'other', label: 'Other'},
+]
+const categories = ref({...chips})
+const activeChip = ref(null)
 
 const loadQuestions = async () => {
   const {data} = await axios.get('https://chek-list-questions-default-rtdb.firebaseio.com/questions.json')
@@ -53,7 +51,7 @@ const addQuestion = async () => {
 
 const deleteQuestion = async (id) => {
   console.log(id)
-  const confirmDelete = prompt('Введите пороль для удаления:');
+  const confirmDelete = prompt('Введите пароль для удаления:');
   if (confirmDelete === '2003') {
     await axios.delete(`https://chek-list-questions-default-rtdb.firebaseio.com/questions/${id}.json`)
   } else {
@@ -63,36 +61,39 @@ const deleteQuestion = async (id) => {
 }
 
 const isEnabledBtn = computed(() => (
-    draftQuestion.value.title.length > 3 &&
-    draftQuestion.value.text.length > 3 &&
-    draftQuestion.value.category !== ''
+    draftQuestion.value.title.length > 3
+    && draftQuestion.value.text.length > 3
+    && draftQuestion.value.category !== ''
 ))
 
+const filteredQuestions = computed(() => activeChip.value
+    ? questions.value.filter(e => e.category === activeChip.value)
+    : questions.value
+)
 onMounted(() => {
   loadQuestions()
 })
 </script>
 
 <template>
-
   <div class="app-container" v-if="!openQuestionForm">
 
     <h1 class="app-title">Список вопросов</h1>
     <div class="chip-container">
-      <div class="chip" @click="activeChipQuestion = 'allQuestionList'">Все вопросы</div>
-      <div class="chip" @click="activeChipQuestion = 'cssQuestionList'">CSS</div>
-      <div class="chip" @click="activeChipQuestion = 'jsQuestionList'">JavaScript</div>
-      <div class="chip" @click="activeChipQuestion = 'vueQuestionList'">Vue</div>
-      <div class="chip" @click="activeChipQuestion = 'otherQuestionList'">Общие</div>
+      <div
+          class="chip"
+          v-for="chip in chips"
+          @click="activeChip = chip.value"
+      >{{ chip.name }}
+      </div>
     </div>
-    <component
-    :is="activeChipQuestion"
-        :questions="questions"
-        @finish-question="toggleQuestionStatus"
-        @repeat-question="toggleQuestionStatus"
+    <question-item
+        v-for="question in filteredQuestions"
+        :key="question.id"
+        :item="question"
+        @toggle-status="toggleQuestionStatus"
         @removeQuestion="deleteQuestion"
-    >
-    </component>
+    />
     <button class="button" @click="openQuestionForm = true">Добавить вопрос</button>
   </div>
 
@@ -107,7 +108,7 @@ onMounted(() => {
 
       <div class="option-list">
         <div
-            v-for="option in category"
+            v-for="option in categories"
             :key="option.value"
             class="option-card"
             :class="{ active: draftQuestion.category === option.value }"
@@ -126,13 +127,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.formatted-text {
-  white-space: pre-line; /* Сохраняет переносы строк и пробелы */
-  word-wrap: break-word; /* Разбивает длинные слова, если они не помещаются */
-  overflow-wrap: break-word; /* То же, что и word-wrap для современных браузеров */
-  max-width: 100%; /* Ограничивает ширину контейнера */
-  margin: 1em 0;
-}
-</style>
