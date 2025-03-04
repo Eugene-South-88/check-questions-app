@@ -31,6 +31,7 @@ const loadQuestions = async () => {
       ...data[key]
     }
   })
+  console.log(questions.value)
 }
 
 const toggleQuestionStatus = async (id, status) => {
